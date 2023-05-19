@@ -1,7 +1,6 @@
 benchmark: lin
 width: [10]
 quiet: False
-Ndata: 2500
 stopping-criterion:
   mode: error   # Train to target error or loss minimum
   target-error: [0.1, 0.1]
