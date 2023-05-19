@@ -1,0 +1,30 @@
+benchmark: node1
+width: [20]
+quiet: False
+Ndata: 1000
+stopping-criterion:
+  mode: PSO   # Train to target error or loss minimum
+  target-error: [0.03, 0.03]
+  loss-stop: 0.00095 
+  loss-grad-stop: .inf
+  loss-grad-grad-stop: .inf
+optimizer:
+  type: AdamW   #AdamW, SGD
+  lr: 1e-3
+verifier: "dreal" # dreal, z3
+output-type: [csv] # None, xml, plot, csv
+output-file: experiments/node1/pwc-node1-model  # Exclude extension 
+timeout: False
+timeout-duration: 120
+seed: 0
+repeat: 10
+save-net: False
+bounded-time: True
+time-horizon: 1.0
+template: pwc # pwc, pwa, sig
+initial: "x0 >=0.5 & x0<=0.51 & x1 >=0.5 & x1<=0.51 & t==0"  # Note, spaceex and flowstar use different syntax
+spaceex: True
+flowstar: False
+prune: False
+error-check: True
+n-proc: 4

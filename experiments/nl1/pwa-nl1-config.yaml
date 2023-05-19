@@ -1,0 +1,29 @@
+benchmark: nl1
+width: [10]
+quiet: True
+stopping-criterion:
+  mode: loss   # Train to target error or loss minimum
+  target-error: 0.06
+  loss-stop: 3.0e-5
+  loss-grad-stop: .inf
+  loss-grad-grad-stop: .inf
+optimizer:
+  type: AdamW   #AdamW, SGD
+  lr: 1e-3
+verifier: "dreal" # dreal, z3
+output-type: [csv, xml] # None, xml, plot, csv
+output-file: experiments/nl1/pwa-nl1-model  # Exclude extension 
+timeout: False
+timeout-duration: 120
+seed: 0
+repeat: 10
+save-net: False
+bounded-time: True
+time-horizon: 1.0
+template: pwa
+initial: "x0 >= 0 & x0 <= 0.01 & x1 >= 0 & x1 <= 0.01 & u0==0 & u1==0 & t==0"
+spaceex: True
+flowstar: False
+prune: False
+error-check: True
+n-procs: 4

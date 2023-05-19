@@ -1,0 +1,31 @@
+benchmark: nl2
+width: [14, 12]
+quiet: True
+stopping-criterion:
+  mode: loss   # Train to target error or loss minimum
+  target-error: 0.03
+  loss-stop: 1.0e-4
+  loss-grad-stop: .inf
+  loss-grad-grad-stop: .inf
+optimizer:
+  type: AdamW   #AdamW, SGD
+  lr: 1e-3
+verifier: "dreal" # dreal, z3
+output-type: [csv] # None, xml, plot, csv
+output-file: experiments/error-refine/pwa-refine-model  # Exclude extension 
+results: results/error-refine
+timeout: False
+timeout-duration: 120
+seed: 0
+repeat: 10
+save-net: False
+bounded-time: True
+time-horizon: 1.0
+template: pwa
+initial: "x0 >= -0.005 & x0 <= 0.005 & x1 >= -0.50 & x1 <= -0.49 & u0==0 & u1==0 & t==0 "
+spaceex: True
+flowstar: False
+prune: False
+error-check: False
+n-procs: 1
+

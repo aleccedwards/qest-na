@@ -1,0 +1,30 @@
+benchmark: lin
+width: [2, 10, 2]
+quiet: False
+stopping-criterion:
+  mode: error   # Train to target error or loss minimum
+  target-error: [0.02, 0.02]
+  loss-stop: 0.00095 
+  loss-grad-stop: .inf
+  loss-grad-grad-stop: .inf
+optimizer:
+  type: AdamW   #AdamW, SGD
+  lr: 1e-3
+verifier: "dreal" # dreal, z3
+output-type: [flowstar] # None, xml, plot, csv
+output-file: experiments/node1/node1-true-model  # Exclude extension 
+timeout: False
+timeout-duration: 120
+seed: 0
+repeat: 1
+save-net: False
+bounded-time: True
+time-horizon: 1.0
+template: tanh # pwc, pwa, sig
+initial: "x0 in [0.5, 0.51]; x1 in [0.5, 0.51]" # Note, spaceex and flowstar use different syntax
+spaceex: False
+flowstar: False
+prune: True
+error-check: True
+flowstar-config:
+  order: 6

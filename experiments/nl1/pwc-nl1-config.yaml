@@ -1,0 +1,31 @@
+benchmark: nl1
+width: [20]
+Ndata: 2000
+quiet: False
+stopping-criterion:
+  mode: PSO   # Train to target error or loss minimum
+  target-error: 0.02
+  loss-stop: 8.5e-4
+  loss-grad-stop: .inf
+  loss-grad-grad-stop: .inf
+optimizer:
+  type: AdamW   #AdamW, SGD
+  lr: 1e-3
+  momentum: 0.99 # SGD only
+verifier: "dreal" # dreal, z3
+output-type: [csv] # None, xml, plot, csv
+output-file: experiments/nl1/pwc-nl1-model  # Exclude extension 
+timeout: False
+timeout-duration: 120
+seed: 0
+repeat: 10
+save-net: False
+bounded-time: True
+time-horizon: 1.0
+template: pwc
+initial: "x0 >= 0 & x0 <= 0.01 & x1 >= 0 & x1 <= 0.01 & u0==0 & u1==0 & t==0  "
+spaceex: True
+flowstar: False
+prune: False
+error-check: True
+n-procs: 4

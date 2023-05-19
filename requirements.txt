@@ -1,0 +1,15 @@
+torch
+numpy
+z3-solver
+dreal
+matplotlib
+pandas
+pyinterval
+seaborn
+sympy
+ConfigArgParse
+pycddlib
+PyYaml
+scipy
+tqdm
+pyswarms

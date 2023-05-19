@@ -1,0 +1,30 @@
+benchmark: tank4
+width: [12]
+quiet: True
+Ndata: 10000
+stopping-criterion:
+  mode: error   # Train to target error or loss minimum
+  target-error: [0.2, 0.2, 0.2, 0.2]
+  loss-stop: 7.0e-5
+  loss-grad-stop: .inf
+  loss-grad-grad-stop: .inf
+optimizer:
+  type: AdamW   #AdamW, SGD
+  lr: 1e-3
+verifier: "z3" # dreal, z3
+output-type: [csv] # None, xml, plot, csv
+output-file: experiments/tank4d/pwa-tank4-model  # Exclude extension 
+timeout: False
+timeout-duration: 120
+seed: 0
+repeat: 10
+save-net: False
+bounded-time: True
+time-horizon: 1.0
+template: pwa
+initial: " x0 >= 0.00 & x0<=0.01 & x1 >= 0.80 & x1<=0.81 &  x2 >= 0.80 & x2<=0.81 & x3 >=0.8 & x3<=0.81 & t==0 "
+spaceex: True
+flowstar: False
+prune: False
+error-check: True
+n-procs: 4

@@ -1,0 +1,35 @@
+benchmark: nl2
+width: [10]
+Ndata: 1000
+quiet: True
+stopping-criterion:
+  mode: loss   # Train to target error or loss minimum
+  target-error: [0.01, 0.06]
+  loss-stop: 3.0e-5
+  loss-grad-stop: .inf
+  loss-grad-grad-stop: .inf
+optimizer:
+  type: AdamW   #AdamW, SGD
+  lr: 1e-3
+  momentum: 0.99 # SGD only
+verifier: "dreal" # dreal, z3
+output-type: [csv] # None, xml, plot, csv
+output-file: experiments/nl2/nl-nl2-model  # Exclude extension 
+timeout: False
+timeout-duration: 120
+seed: 0
+repeat: 8
+save-net: False
+bounded-time: True
+time-horizon: 1.0
+template: sig
+initial: "x0 in [-0.005, 0.005]\nx1 in [-0.5, -0.49]"
+spaceex: False
+flowstar: True
+prune: False
+n-procs: 4
+flowstar-config:
+  step_mode: fixed
+  step_size: 0.005
+  order_mode: adaptive
+  order: [6, 12]
