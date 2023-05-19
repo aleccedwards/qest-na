@@ -66,7 +66,6 @@ class SpaceExHandler:
             self.output_vars = ",".join(["x" + str(i) for i in range(2)])
 
     def run(self, file):
-        print("Running SpaceEx...")
         args = [
             SPACEEX_PATH,
             "--model-file",
@@ -206,14 +205,13 @@ class FlowstarHandler:
             time_taken = float(match_time.group(1))
             if not match_success:
                 time_taken = None
-                logging.error(
+                logging.warning(
                     "Flowstar failed. Did not compute full flowpipe".format(err)
                 )
             return time_taken
         except AttributeError:
             time_taken = None
             logging.warning("Flowstar failed. Error: {}".format(err))
-
         return time_taken
 
     def plot(self, plot_file: str):

@@ -223,6 +223,7 @@ def clean_processes():
     # This is currently extremely hacky and should be replaced with a more robust solution
     # but is currently the only way to ensure that the spaceex proceedings are killed and do
     # not clog up the system
+    logging.debug("Killing all spaceex and flowstar processes")
     subprocess.call(["pkill", "sspaceex"])
     subprocess.call(["pkill", "flowstar"])
 
@@ -242,14 +243,6 @@ def clean_files(output_file, seed, rename=False):
             extension = f.split(".")[-1]
             # output_file = "models/" + output_file
             os.rename(f, output_file + "." + extension)
-
-
-def set_logging_level(verbose: bool):
-    """Sets the logging level to INFO if verbose, else ERROR"""
-    if verbose:
-        logging.basicConfig(level=logging.INFO)
-    else:
-        logging.basicConfig(level=logging.ERROR)
 
 
 if __name__ == "__main__":

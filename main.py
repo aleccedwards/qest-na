@@ -27,7 +27,7 @@ from benchmarks import read_benchmark
 from cegis.cegis import Cegis
 from cli import get_config
 from config import Config
-from utils import Result, Stats, clean
+from utils import Result, clean
 
 
 def record_results(config, result):
@@ -235,28 +235,27 @@ def _worker_Q(cegis_config, id, queue, run, base_seed=0):
     cegis_config.seed = (
         seed  # This isn't used by cegis but is for data recording and reproducibility
     )
-    while run.is_set():
-        result = run_all(cegis_config)
-        attempt += 1
-        if result.res and run.is_set():
-            # Add the id to the label as a sanity check (ensures returned result is from the correct process)
-            run.clear()
-            logging.debug("Worker", id, "succeeded")
-            result = result._replace(seed=seed)
-            result_dict = {}
-            result_dict["id"] = id
-            result_dict["success"] = result.res
-            result_dict["result" + str(id)] = result
-            result_dict["attempt" + str(id)] = attempt
-            queue.put(result_dict)
-        elif not result.res:
-            result_dict = {}
-            result_dict["id"] = id
-            result_dict["result" + str(id)] = result
-            result_dict["attempt" + str(id)] = attempt
-            queue.put(result_dict)
-            logging.debug("Worker", id, "failed")
-        return result_dict
+    result = run_all(cegis_config)
+    attempt += 1
+    if result.res:
+        # Add the id to the label as a sanity check (ensures returned result is from the correct process)
+        logging.debug("Worker", id, "succeeded")
+        result = result._replace(seed=seed)
+        result_dict = {}
+        result_dict["id"] = id
+        result_dict["success"] = result.res
+        result_dict["result" + str(id)] = result
+        result_dict["attempt" + str(id)] = attempt
+        queue.put(result_dict)
+    elif not result.res:
+        result_dict = {}
+        result_dict["id"] = id
+        result_dict["success"] = result.res
+        result_dict["result" + str(id)] = result
+        result_dict["attempt" + str(id)] = attempt
+        queue.put(result_dict)
+        logging.debug("Worker", id, "failed")
+    return result_dict
 
 
 class CegisSupervisorQ:
@@ -287,29 +286,25 @@ class CegisSupervisorQ:
                 procs.append(p)
             dead = [not p.is_alive() for p in procs]
 
-            if any(dead) and not run.is_set():
-                # If any processes have died and the run event is not set then we have a successful result
-                [p.terminate() for p in procs]
-                res = queue.get()
-                return res
-            elif all(dead) and run.is_set():
-                # If all processes have died and the run event is set then we have failed
-                try:
-                    res = queue.get(block=False)
-                except:
-                    res = None
-                return res
-            elif any(dead) and sum(dead) > n_res:
-                # If any processes have died and the run event is set then a process has failed, but some are still running
-                try:
-                    res = queue.get(block=False)
+            try:
+                res = queue.get(block=False)
+                if res["success"]:
+                    logging.debug("Success: Worker", res["id"])
+                    [p.terminate() for p in procs]
+                    return res
+                else:
                     n_res += 1
-                    logging.debug("Got result from worker", res["id"])
-                except Empty:
-                    logging.debug("Queue is empty")
-                    pass
-            elif time.perf_counter() - start > self.cegis_timeout_sec:
+                if n_res == self.max_processes:
+                    logging.debug("All workers failed, returning last result")
+                    # Return the last result
+                    return res
+
+            except Empty:
+                pass
+
+            if time.perf_counter() - start > self.cegis_timeout_sec:
                 # If the timeout has been reached then kill all processes and return
+                logging.info("Timeout reached")
                 [p.terminate() for p in procs]
                 res = {}
                 res["id"] = ""
@@ -374,6 +369,12 @@ def get_timers(cegis, NA, verbose=True):
 
 if __name__ == "__main__":
     conf = get_config()
+    if conf.verbose:
+        level = logging.INFO
+    else:
+        level = logging.ERROR
+    logging.basicConfig(filename="report.log", encoding="utf-8", level=level)
+    logging.info("Starting")
     N_PROCS = int(conf.n_procs)
     torch.set_num_threads(1)
     os.environ["OMP_NUM_THREADS"] = "1"

@@ -262,9 +262,7 @@ class ReluNet(nn.Module):
         )
 
         # Perform optimization
-        cost, pos = optimizer.optimize(
-            flatnet.f, iters=1000, verbose=self.config.verbose
-        )
+        cost, pos = optimizer.optimize(flatnet.f, iters=1000, verbose=False)
         best_loc = np.tile(pos, (NP, 1))
         x = flatnet.update_torch_net(pos)
         self.__dict__.update(x.__dict__)

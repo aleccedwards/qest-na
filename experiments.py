@@ -1,7 +1,7 @@
 import argparse
 import subprocess
 
-MODELS = ["nl1", "nl2", "watertank", "tank4d", "tank6d"]
+MODELS = ["nl1", "nl2", "watertank", "tank4d", "tank6d", "node1"]
 TEMPLATES = ["pwc", "pwa", "nl"]
 
 
@@ -41,11 +41,15 @@ def main(args):
         models = MODELS
     if "all" in templates:
         templates = TEMPLATES
-    print(templates)
 
     for model in models:
         for template in templates:
-            config = f"experiments/{model}/{template}-{model}-config.yaml"
+            if model == "tank6d" or model == "tank4d":
+                model_s = model[:-1]
+            else:
+                model_s = model
+
+            config = f"experiments/{model}/{template}-{model_s}-config.yaml"
             if model == "tank6d" and (template == "nl" or template == "pwc"):
                 continue
 
@@ -55,7 +59,7 @@ def main(args):
             elif template == "pwa" or template == "pwc":
                 args += f" --spaceex {spaceex}"
             # args += f" --error-check {error_check}"
-            subprocess.run("python3 main.py " + args, shell=True, check=True)
+            subprocess.run("python3 main.py " + args, shell=True)
 
 
 if __name__ == "__main__":
