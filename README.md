@@ -1,19 +1,34 @@
 # Neural Abstractions
 
-This repository serves as supplementary material for the corresponding paper Neural Abstractions, for the purpose of validating experimental results, and for using the codebase for continued development or research. This repository is maintained at [https://github.com/aleccedwards/neural-abstractions-nips22](https://github.com/aleccedwards/neural-abstractions-nips22), and the corresponding paper can be found at [https://openreview.net/forum?id=jF7u0APnGOv&noteId=dc6oF0HHC8](https://openreview.net/forum?id=jF7u0APnGOv&noteId=dc6oF0HHC8).
+This repository serves as the artifact for the paper "On the Trade-off between Precision and Efficiency of Neural Abstraction". We use Docker to create a reproducible environment for the experiments. The Docker image is based on Ubuntu 22.04. Unfortunately, we rely on SpaceEx for part of the experiments which users must register for and download themselves. We include instructions on how to do this below. All other dependencies are installed automatically during the Docker build process.
 
-We do not provide this repository as a full repeatability package. Due to the certificiation step, the results are sensitive to initial random seeding of the network and may not be entirely reproducable. For this reason, we provide the trained models in the form of hybrid automatons as .xml model files, which can be provided to SpaceEx for the safety verification stage. These files are constructed from a certified abstraction, and can be used to repeat the corresponding safety verification using the procedure described in the sequel.
+## System Requirements
+
+* Ideally the users are running Linux as the host OS.
+* Many of experiments rely on process-based parallelism, and so the machine running the experiments should have at least 6 cores. We only use 4 at any time, but the experiments in the paper are ran on a machine with 8 cores. Using fewer than 4 cores will break reproducibility.
+* We do not know the exact memory requirements, but the machine used to run the experiments had 16GB of RAM, so we recommend at least this much.
+
+## Install SpaceEx
+
+A registration is required to install SpaceEx, though it is available for free. It can be installed into the Docker container as follows.
+On your host machine, go to <http://spaceex.imag.fr/download-6>, and download the SpaceEx command line executable v0.9.8f (64 bit Linux), under the SpaceEx Analysis Core. This version is required for the Docker container. This README assumes you have a 64 bit architecture; we have not tested the results on other architectures.
+Extract the corresponding archive to some location on your host machine. Then move the spaceex_exe folder to the project root directory. The folder should be named `spaceex_exe`. If you are struggling to extract the archive, you might need to go down a level in the directory structure.
 
 ## Docker Installation
 
-For your convenience we provide a Docker file. Docker can be installed by visiting <https://docs.docker.com/get-docker/>. Note that building the image may take a while due to downloading PyTorch. Within the project root directory, run:
+Docker can be installed by visiting <https://docs.docker.com/get-docker/>. Note that building the image may take a while due to downloading and building the dependencies, including PyTorch, Dreal and Flow*. Within the project root directory, run:
 
 ```console
-# docker build -t ubuntu:na .
-# docker run --name na -it ubuntu:na bash
+# docker build -t qest-na:latest .
 ```
 
-Here, the container is name `na` for simplicity.
+The build time is around 10 minutes with good internet connection.
+
+We mount the results directory to the host machine so that the results can be easily accessed from the host. Start the container with:
+
+```console
+# docker run --name na -v $PWD/results:/neural-abstraction/results/ -v $PWD/experiments:/neural-abstraction/experiments/ -it qest-na:latest bash 
+```
 
 You are now inside the container. Move to the project directory.
 
@@ -21,58 +36,85 @@ You are now inside the container. Move to the project directory.
 cd /neural-abstractions
 ```
 
-You are now able to run the program. The settings for a program are determined using a .yaml config file, the default location for which is `./config.yaml`. The used config file can be changed using the `-c` command line option. Note, the desired network structure must be passed using the command line option `-w` and is not settable from the config file.
-
-### Install SpaceEx into the container
-
-A registration is required to install SpaceEx, though it is available for free. It can be installed into the Docker container as follows.
-On your host machine, go to <http://spaceex.imag.fr/download-6>, and download the SpaceEx command line executable v0.9.8f. This README assumes you have a 64 bit architecture.
-Extract the corresponding archive to some location on your host machine. The extracted folder spaceex_exe must be copied to the container using using
-
-```console
-# docker cp /path/to/spaceex_exe na:/spaceex_exe`
-```
+You are now able to run the program. The settings for a program are determined using a .yaml config file, the default location for which is `./config.yaml`. The used config file can be changed using the `-c` command line option.
 
 ## Running Experiments
 
-Each experiment within Table 1 corresponds to a subdirectory within ./experiments named after the corresponding benchmark model. Each directory contains 4 shell scripts:
+### Main Results
 
-* A synthesis (synth) script which synthesises the neural abstraction and constructs the xml model file for SpaceEx.
-* A SpaceEx script that performs the corresponding safety verification on the constructed abstraction
-* An experiment script that performs both synth and safety verification together.
-* A table-1-row script that also determines the runtime of the experiment.
+We provide scripts to automate the running of experiments. All scripts should be run from the project root directory.
+For the results in the main table (and corresponding time table), the script `experiments.py` should be used. This takes two arguments: `-m`, which takes a list of models to run, and `-t`, which takes a list of templates. The models correspond to benchmarks, and the options are "nl1 nl2 watertank tank4d tank6d node1". The parameter "all" can be passed instead to run over all models.
+The templates correspond to different abstract models, with options "pwc pwa nl". Again, "all" can be passed to run over all templates.
 
-Any of these scripts can be run as executables. For instance, to repeat the safety verification step for the Jet Engine benchmark in Table 1, run from the project directory
-
-```console
-cd experiments/jet
-./jet-spaceex.sh
-```
-
-For convenience, the script `experiments/run_experiments.sh` will run all experiments in Table 1.
-
-The experimental results from Table 2 in Appendix B can be re-obtained by running the experiments.sh script. Note, this script is currently set spawn up to 30 different processes in parallel. If you wish to repeat these experiments it is recommended that you either use a machine with this many cores, or reduce the total number of processes that can spawn concurrently.
-
-The results themselves are in `results/results.csv` and `results/hybridisation-results.py`, and Table 2 can be recreated (in two parts) by running:
+Due to the long runtime of experiments, we do not recommend running all results here. A suitable subset of results can be obtained by running the following commands:
 
 ```console
-python3 hybridisation.py
-python3 resplot.py
+python3 experiments.py -m nl1 nl2 watertank -t all
 ```
 
-which will create the files `table2.tex` and `table2-asm.text`.
+**NOTE: Do NOT try to run more than one experiment or script or command at once. Due to the use of process-based parallelism and a (hacky) fix to terminate SpaceEx and Flow\* processes, running multiple experiments at once will cause the processes to terminate prematurely.**
 
-We also retain the corresponding model files for Flow*, which can be repeated. This procedure is not part of this README.
+To facilitate reviewers, we include the approximate expected runtimes of each experiment in the table below. These are based on the machine used to run the experiments, which had 8 cores and 16GB of RAM. We encourage reviewers to repeat whichever combination of experiments they wish, but we recommend running at least the experiments in the table below. Our recommended experiments, being nl1, nl2 and watertank over all templates, should take around 3 hours to run.
 
-## Citation
+|                           |   Total Time (s)      |
+|:--------------------------|----------------------:|
+| ('Non-Lipschitz1', 'pwa') |              530      |
+| ('Non-Lipschitz1', 'pwc') |              110      |
+| ('Non-Lipschitz1', 'sig') |             1200      |
+| ('Non-Lipschitz2', 'pwa') |              1000     |
+| ('Non-Lipschitz2', 'pwc') |              250      |
+| ('Non-Lipschitz2', 'sig') |             4950      |
+| ('Water-tank', 'pwa')     |              740      |
+| ('Water-tank', 'pwc')     |               50      |
+| ('Water-tank', 'sig')     |              200      |
+| ('Water-tank-4d', 'pwa')  |              230      |
+| ('Water-tank-4d', 'pwc')  |             3850      |
+| ('Water-tank-4d', 'sig')  |             1500      |
+| ('Water-tank-6d', 'pwa')  |             8400      |
+| ('NODE1', 'pwa')          |              210      |
+| ('NODE1', 'pwc')          |              810      |
+| ('NODE1', 'sig')          |             1300      |
 
-To cite this work, please use the following bibtex entry:
+### Figures
 
-``` bibtex
-@inproceedings{abate2022neural,
-  title = {Neural Abstractions},
-  booktitle = {Thirty-Sixth Conference on Neural Information Processing Systems},
-  author = {Abate, Alessandro and Edwards, Alec and Giacobbe, Mirco},
-  year = {2022}
-}
+The figures can be reproduced using the script:
+  
+```console
+./abstraction_figures.sh
+```
+
+The script should take less than 10 minutes to run.
+This will generate 7 figures in the folder 'experiments/nl2', four pdfs of the abstractions and three ps files of the flowpipes.
+
+### Error Refinement
+
+The error refinement results are presented in the appendix. Reviewers may also repeat these results if they wish, but we do not consider them a significant part to be reproduced (though we expect them to be reproducable). They can be reproduced using the script:
+  
+```console
+./error_refine.sh
+```
+
+The script should take around 1.5 hours to run.
+Please note: various failures within SpaceEx may be appear during the error refinement experiments. These are not fatal, are handled by the program, and are part of the error refinement experiments.
+
+### Tables
+
+Once the experiments have been run, the tables can be generated using the script:
+  
+```console
+python3 qest_res.py
+```
+
+This will produce three files in the results folder: "main_tab.tex", "time_tab.tex" and "error_check.tex".
+If the relevant experiments have not been run (e.g., the error refinement experiments), the script will use the backup files in the results folder. These are the results from the machine used to run the experiments. The script will also print to the console any results that timed out. These results are not included in the tables. The tables are formatted differently to the paper, but they contain the same information.
+
+Finally, we note that the results obtained by reviewers may not be identical to ours. This is due to several reasons. First is the use of process-based parallelism, which can lead to non-deterministic behaviour. Secondly, it is known that identical random seeds are not reproducible across different machines in [PyTorch](https://pytorch.org/docs/stable/notes/randomness.html).
+However, the results should be similar, and the conclusions should be the same.
+
+### Flow* Neural ODEs
+
+The baseline Flow* result Section 5.2 of reachability on a neural ODE can be reproduced using the script:
+  
+```console
+./node-flowstar.sh
 ```

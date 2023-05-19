@@ -1,8 +1,22 @@
 from math import floor, log10
+import os
+import logging
 
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+
+if not os.path.isfile("results/results.csv"):
+    logging.warning("Results file not found, using backup file")
+    FILE = "results/results.bak.csv"
+else:
+    FILE = "results/results.csv"
+
+if not os.path.isfile("results/error-refine.csv"):
+    logging.warning("Error-refine results file not found, using backup file")
+    ERROR_FILE = "results/error-refine.bak.csv"
+else:
+    ERROR_FILE = "results/error-refine.csv"
 
 
 def sig_fig(x, n=3):
@@ -15,7 +29,7 @@ def sig_fig(x, n=3):
 
 # Read the data
 def table_prune():
-    df = pd.read_csv("results/results.csv")
+    df = pd.read_csv(FILE)
     df = df[df["Template"] != "sig"]
     df = df.filter(
         [
@@ -55,7 +69,7 @@ def table_prune():
 
 
 def table_main():
-    df = pd.read_csv("results/results.csv")
+    df = pd.read_csv(FILE)
 
     df["Total_Time"] = (
         df["Learner_Time"]
@@ -119,7 +133,7 @@ def table_main():
 
 
 def table_timings():
-    df = pd.read_csv("results/results.csv")
+    df = pd.read_csv(FILE)
 
     df = df.drop(df[df["Prune"] == True].index)
     df = df.drop(df[df["Result"] != "S"].index)
@@ -170,7 +184,7 @@ def table_timings():
 
 
 def table_error_check():
-    results = pd.read_csv("results/error-refine.csv")
+    results = pd.read_csv(ERROR_FILE)
     results["New_Mean_Error"] = results["New_Mean_Error"].apply(
         lambda x: np.fromstring(x[1:-1], sep=" ")
     )
@@ -215,7 +229,7 @@ def table_error_check():
 
 
 def report_failures():
-    df = pd.read_csv("results/results.csv")
+    df = pd.read_csv(FILE)
     failures = df[df["Result"] != "S"]
     total_failures = len(failures)
 
@@ -234,7 +248,11 @@ def report_failures():
 
 
 def total_computation_time():
-    pass
+    df = pd.read_csv(FILE)
+    df = df.groupby(["Benchmark", "Template"]).aggregate({"Tot_Time": ["sum"]})
+    df.to_markdown(
+        "results/total_time.md",
+    )
 
 
 if __name__ == "__main__":

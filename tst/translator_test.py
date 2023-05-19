@@ -7,28 +7,31 @@
 
 import unittest
 
+import numpy as np
 import torch
 import z3
-import numpy as np
 
-from cegis.verifier import z3_replacements, Z3Verifier
-from cegis.nn import ReluNet
-from utils import *
-from cegis.translator import Translator
-from cli import get_default_config
 from benchmarks import read_benchmark
+from cegis.nn import ReluNet
+from cegis.translator import Translator
+from cegis.verifier import Z3Verifier, z3_replacements
+from cli import get_default_config
+from utils import *
 
 config = get_default_config()
 
+
 class testTranslatorZ3(unittest.TestCase):
     def setUp(self) -> None:
-        self.width = [3,3]
-        bench = read_benchmark('lin')
+        self.width = [3, 3]
+        bench = read_benchmark("lin")
         self.dimension = bench.dimension
         torch.manual_seed(0)
         self.net = ReluNet(bench, self.width, 0.1, config)
         x0, x1 = [z3.Real("x%d" % i) for i in range(self.dimension)]
-        self.translator = Translator((x0, x1), Z3Verifier.relu)
+        self.translator = Translator(
+            (x0, x1), Z3Verifier.relu, Z3Verifier.relu, rounding=20
+        )
 
     def test_output(self):
         output = self.translator.translate(self.net)
@@ -36,7 +39,7 @@ class testTranslatorZ3(unittest.TestCase):
     def test_output_similarity(self):
         X = torch.randn(10, self.dimension)
         true_output = self.net.model(X).detach()
-        translation = self.translator.translate(self.net, dp=20)
+        translation = self.translator.translate(self.net)
         translated_output = np.array(
             [
                 [
@@ -63,7 +66,6 @@ class testTranslatorZ3(unittest.TestCase):
             ]
         )
         self.assertTrue(np.allclose(true_output, translated_output))
-
 
 
 if __name__ == "__main__":

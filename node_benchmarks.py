@@ -67,24 +67,6 @@ def node1():
     torch.save(node, "experiments/node1/node1.pt")
 
 
-def node3d():
-    CONFIG_FILE = "experiments/node3d/gen-config.yaml"
-    config = cli.get_config_from_yaml(CONFIG_FILE)
-    synth = Synth(config)
-    node = synth.create_from_benchmark()
-    synth.learner_flowstar(node, "experiments/node3d/node3d")
-    torch.save(node, "experiments/node3d/node3d.pt")
-
-
-def node2():
-    CONFIG_FILE = "experiments/node2/gen-config.yaml"
-    config = cli.get_config_from_yaml(CONFIG_FILE)
-    synth = Synth(config)
-    node = synth.create_from_benchmark()
-    synth.learner_flowstar(node, "experiments/node2/node2")
-    torch.save(node, "experiments/node2/node2.pt")
-
-
 if __name__ == "__main__":
     torch.set_num_threads(1)
     torch.manual_seed(0)

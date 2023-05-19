@@ -15,4 +15,3 @@ results/.robustness-scalar.csv.swp
 test-parallel.py
 spaceex_exe
 *.ps
-*.pt

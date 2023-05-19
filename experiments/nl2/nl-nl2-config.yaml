@@ -18,7 +18,7 @@ output-file: experiments/nl2/nl-nl2-model  # Exclude extension
 timeout: False
 timeout-duration: 120
 seed: 0
-repeat: 8
+repeat: 10
 save-net: False
 bounded-time: True
 time-horizon: 1.0

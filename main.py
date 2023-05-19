@@ -177,7 +177,7 @@ def construct_abstraction(config: Config, cegis, net, e, benchmark):
         if config.error_check:
             for mode in tqdm(NA.modes.values(), disable=True):
                 mode.check_disturbance(benchmark, cegis.S, ver_type=config.verifier)
-        errors = NA.error_analysis(verbose=True)
+        errors = NA.error_analysis(verbose=False)
         transitions = len(NA.transitions)
         if config.prune:
             NA.prune_transitions_new(
