@@ -5,16 +5,16 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import torch
 from typing import List
-from interval import interval
+
+import torch
 
 
 def square_init_data(domain, batch_size):
     """Samples points uniformly over a rectangular domain.
 
     Args:
-        domain (List[float]): 
+        domain (List[float]):
             lower and upper bounds of the domain.
         batch_size (int): number of points to sample.
 
@@ -30,7 +30,7 @@ def square_init_data(domain, batch_size):
 
 def n_dim_sphere_init_data(centre, radius, batch_size):
     """Generates points in a n-dim sphere: X**2 <= radius**2
-    
+
         Adapted from http://extremelearning.com.au/how-to-generate-uniformly-random-points-on-n-spheres-and-n-balls/
         method 20: Muller generalised
 
@@ -47,7 +47,7 @@ def n_dim_sphere_init_data(centre, radius, batch_size):
     u = torch.randn(
         batch_size, dim
     )  # an array of d normally distributed random variables
-    norm = torch.sum(u ** 2, dim=1) ** (0.5)
+    norm = torch.sum(u**2, dim=1) ** (0.5)
     r = radius * torch.rand(batch_size, dim) ** (1.0 / dim)
     x = torch.div(r * u, norm[:, None]) + torch.tensor(centre)
 
@@ -56,6 +56,7 @@ def n_dim_sphere_init_data(centre, radius, batch_size):
 
 class Rectangle:
     """Hypercube in R^n"""
+
     def __init__(self, lb: List[float], ub: List[float]):
         """Initiaises hypercube in R^n.
 
@@ -92,7 +93,7 @@ class Rectangle:
 
         Returns:
             torch.Tensor: sampled data
-        """        
+        """
         return square_init_data([self.lower_bounds, self.upper_bounds], batch_size)
 
     def generate_bloated_data(self, batch_size: int, bloat=0.1) -> torch.Tensor:
@@ -104,7 +105,7 @@ class Rectangle:
 
         Returns:
             torch.Tensor: sampled data
-        """        
+        """
         return square_init_data(
             [
                 [lb - bloat for lb in self.lower_bounds],
@@ -112,10 +113,6 @@ class Rectangle:
             ],
             batch_size=batch_size,
         )
-
-    def as_intervals(self) -> List[interval]:
-        """Expresses rectangle as intervals."""
-        return [interval(dx) for dx in zip(self.lower_bounds, self.upper_bounds)]
 
     def check_interior(self, S: torch.Tensor) -> torch.Tensor:
         """Checks if points in S are in interior of rectangle.
@@ -148,13 +145,14 @@ class Rectangle:
 
 class Sphere:
     """Hypersphere in R^n"""
+
     def __init__(self, centre: List[float], radius: float):
         """Initiaises hypersphere in R^n.
 
         Args:
             centre (List[float]): centre of sphere.
             radius (float): radius of sphere.
-        """        
+        """
         self.name = "sphere"
         self.centre = centre
         self.radius = radius
@@ -172,7 +170,7 @@ class Sphere:
         """
         return _And(
             sum([(x[i] - self.centre[i]) ** 2 for i in range(self.dimension)])
-            <= self.radius ** 2
+            <= self.radius**2
         )
 
     def generate_data(self, batch_size):
@@ -183,8 +181,8 @@ class Sphere:
 
         Returns:
             torch.Tensor: sampled data
-        """  
-        return n_dim_sphere_init_data(self.centre, self.radius ** 2, batch_size)
+        """
+        return n_dim_sphere_init_data(self.centre, self.radius**2, batch_size)
 
 
 if __name__ == "__main__":

@@ -1,12 +1,21 @@
 # Neural Abstractions
 
-This repository serves as the artifact for the paper "On the Trade-off between Precision and Efficiency of Neural Abstraction". We use Docker to create a reproducible environment for the experiments. The Docker image is based on Ubuntu 22.04. Unfortunately, we rely on SpaceEx for part of the experiments which users must register for and download themselves. We include instructions on how to do this below. All other dependencies are installed automatically during the Docker build process.
+This repository serves as the artifact for the paper "On the Trade-off between Precision and Efficiency of Neural Abstraction". We use Docker to create a reproducible environment for the experiments. The Docker image is based on Ubuntu 22.04. Unfortunately, we require on SpaceEx for part of the experiments which users must register for and download themselves. We include instructions on how to do this below. All other dependencies are installed automatically during the Docker build process.
 
 ## System Requirements
 
-* Ideally the users are running Linux as the host OS.
+* Ideally, users are running Linux as the host OS.
 * Many of experiments rely on process-based parallelism, and so the machine running the experiments should have at least 6 cores. We only use 4 at any time, but the experiments in the paper are ran on a machine with 8 cores. Using fewer than 4 cores will break reproducibility.
 * We do not know the exact memory requirements, but the machine used to run the experiments had 16GB of RAM, so we recommend at least this much.
+* The host machine will also need 15GB of free disk space to store the Docker image and results.
+
+## Repository Cloning
+
+Clone the repository using:
+
+```console
+git clone https://gitfront.io/r/aleccedwards/45vX4SzLQENi/qest-na.git
+```
 
 ## Install SpaceEx
 
@@ -22,7 +31,7 @@ Docker can be installed by visiting <https://docs.docker.com/get-docker/>. Note 
 # docker build -t qest-na:latest .
 ```
 
-The build time is around 10 minutes with good internet connection.
+The build time is around 10 minutes with good internet connection. Also, depending on how Docker is installed, you may need to run the Docker commands with `sudo`.
 
 We mount the results directory to the host machine so that the results can be easily accessed from the host. Start the container with:
 
@@ -84,7 +93,7 @@ The figures can be reproduced using the script:
 ```
 
 The script should take less than 10 minutes to run.
-This will generate 7 figures in the folder 'experiments/nl2', four pdfs of the abstractions and three ps files of the flowpipes.
+This will generate 7 figures in the folder 'experiments/nl2', four pdfs of the model abstractions and three postscript (ps) files of the flowpipes.
 
 ### Error Refinement
 
@@ -95,7 +104,7 @@ The error refinement results are presented in the appendix. Reviewers may also r
 ```
 
 The script should take around 1.5 hours to run.
-Please note: various failures within SpaceEx may be appear during the error refinement experiments. These are not fatal, are handled by the program, and are part of the error refinement experiments.
+Please note: various failures within SpaceEx may appear during the error refinement experiments. These are not fatal, are handled by the program, and are part of the error refinement experiments.
 
 ### Tables
 
