@@ -11,7 +11,7 @@ This repository serves as the artifact for the paper "On the Trade-off between P
 
 ## Repository Cloning
 
-Unzip the repository (qest-na.zip) into a folder of your choice. This folder will be referred to as the project root directory. The root directory should contain various python files, scripts, a dockerfile, and subdirectories named `experiments`, `results` and `cegis`. The `experiments` directory contains the experiments to be run, the `results` directory contains the results of the experiments, and the `cegis` directory contains more python code. The `experiments` and `results` directories are mounted to the Docker container, so that the results can be easily accessed from the host machine.
+Unzip the repository (qest-na.zip).  The root directory should contain various python files, scripts, a dockerfile, and subdirectories named `experiments`, `results` and `cegis`. The `experiments` directory contains the experiments to be run, the `results` directory contains the results of the experiments, and the `cegis` directory contains more python code. The `experiments` and `results` directories are mounted to the Docker container, so that the results can be easily accessed from the host machine.
 
 Alternatively, clone the repository using git:
 
