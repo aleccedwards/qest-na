@@ -1,6 +1,6 @@
-from math import floor, log10
-import os
 import logging
+import os
+from math import floor, log10
 
 import numpy as np
 import pandas as pd
@@ -97,15 +97,8 @@ def table_main():
     # table = table.round(2)
     # table = table.applymap(lambda x: sig_fig(x))
     table = table.loc[
-        [
-            "Water-tank",
-            "Non-Lipschitz1",
-            "Non-Lipschitz2",
-            "Water-tank-4d",
-            "Water-tank-6d",
-            "NODE1",
-        ],
-        ["pwc", "pwa", "sig"],
+        :,
+        :,
         :,
         :,
     ]
@@ -150,15 +143,8 @@ def table_timings():
     )
     # table = table.applymap(lambda x: sig_fig(x))
     table = table.loc[
-        [
-            "Water-tank",
-            "Non-Lipschitz1",
-            "Non-Lipschitz2",
-            "Water-tank-4d",
-            "Water-tank-6d",
-            "NODE1",
-        ],
-        ["pwc", "pwa", "sig"],
+        :,
+        :,
         :,
     ]
     table.rename(

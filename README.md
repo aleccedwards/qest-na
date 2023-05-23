@@ -42,7 +42,7 @@ We mount the results directory to the host machine so that the results can be ea
 You are now inside the container. Move to the project directory.
 
 ```console
-cd /neural-abstractions
+cd /neural-abstraction
 ```
 
 You are now able to run the program. The settings for a program are determined using a .yaml config file, the default location for which is `./config.yaml`. The used config file can be changed using the `-c` command line option.
