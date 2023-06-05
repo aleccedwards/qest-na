@@ -8,6 +8,7 @@ This repository serves as the artifact for the paper "On the Trade-off between P
 * Many of experiments rely on process-based parallelism, and so the machine running the experiments should have at least 6 cores. We only use 4 at any time, but the experiments in the paper are ran on a machine with 8 cores. Using fewer than 4 cores will break reproducibility.
 * We do not know the exact memory requirements, but the machine used to run the experiments had 16GB of RAM, so we recommend at least this much.
 * The host machine will also need 15GB of free disk space to store the Docker image and results.
+* M1 and M2 Macbooks are not supported. This is due to an architecture incompatibility preventing the building of DReal ([see here](https://github.com/dreal/dreal4/issues/295)).
 
 ## Repository Cloning
 

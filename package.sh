@@ -21,7 +21,7 @@ find . -name 'private' -exec rm -rf {} \; || :
 find . -name 'counterexamples' -exec rm -rf {} \; || :
 find . -name 'images' -exec rm -rf {} \; || :
 find . -name 'outputs' -exec rm -rf {} \; || :
-find . -name 'spaceex_exe' -exec rm -rf {} \; || :
+# find . -name 'spaceex_exe' -exec rm -rf {} \; || :
 find . -name '.json' -exec rm -rf {} \; || :
 find . -name '.vscode' -exec rm -rf {} \; || :
 find . -name *.pkl -exec rm -rf {} \; || :
