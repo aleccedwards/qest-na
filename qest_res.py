@@ -18,6 +18,18 @@ if not os.path.isfile("results/error-refine.csv"):
 else:
     ERROR_FILE = "results/error-refine.csv"
 
+FLOAT_FORMAT = "%.2f"
+
+BENCHMARKS = [
+    "Water-tank",
+    "Non-Lipschitz1",
+    "Non-Lipschitz2",
+    "Water-tank-4d",
+    "Water-tank-6d",
+    "NODE1",
+]
+TEMPLATES = ["pwc", "pwa", "sig"]
+
 
 def sig_fig(x, n=3):
     try:
@@ -97,11 +109,11 @@ def table_main():
     # table = table.round(2)
     # table = table.applymap(lambda x: sig_fig(x))
     table = table.loc[
-        :,
-        :,
-        :,
+        BENCHMARKS,
+        TEMPLATES,
         :,
     ]
+
     table.rename(
         {
             "Error_1_Norm": "$||\epsilon||_1$",
@@ -118,7 +130,7 @@ def table_main():
     )
     table.to_latex(
         "results/main_tab.tex",
-        float_format="%.3g",
+        float_format=FLOAT_FORMAT,
         bold_rows=True,
         escape=False,
         multicolumn_format="c",
@@ -143,8 +155,8 @@ def table_timings():
     )
     # table = table.applymap(lambda x: sig_fig(x))
     table = table.loc[
-        :,
-        :,
+        BENCHMARKS,
+        TEMPLATES,
         :,
     ]
     table.rename(
@@ -162,7 +174,7 @@ def table_timings():
     )
     table.to_latex(
         "results/time_tab.tex",
-        float_format="%.3g",
+        float_format=FLOAT_FORMAT,
         bold_rows=True,
         escape=False,
         multicolumn_format="c",
@@ -193,6 +205,11 @@ def table_error_check():
     table["Success Rate"] = results.groupby(["Template", "Error Refinement"]).apply(
         lambda x: x["Result"].str.contains("S").sum() / len(x["Result"])
     )
+
+    table = table.loc[
+        TEMPLATES[:2],
+        :,
+    ]
     table.rename(
         {
             "Certifier_Time": "$\\bar{T}_C$",
@@ -207,7 +224,7 @@ def table_error_check():
     # table = table.transpose()
     table.to_latex(
         "results/error_check.tex",
-        float_format="%.3g",
+        float_format=FLOAT_FORMAT,
         bold_rows=True,
         escape=False,
         multicolumn_format="c",
