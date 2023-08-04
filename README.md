@@ -8,17 +8,17 @@ This repository serves as the artifact for the paper "On the Trade-off between P
 * Many of experiments rely on process-based parallelism, and so the machine running the experiments should have at least 6 cores. We only use 4 at any time, but the experiments in the paper are ran on a machine with 8 cores. Using fewer than 4 cores will break reproducibility.
 * We do not know the exact memory requirements, but the machine used to run the experiments had 16GB of RAM, so we recommend at least this much.
 * The host machine will also need 15GB of free disk space to store the Docker image and results.
-* M1 and M2 Macbooks are not supported. This is due to an architecture incompatibility preventing the building of DReal ([see here](https://github.com/dreal/dreal4/issues/295)).
+* M1 and M2 Macbooks (and other ARM64 architechtures) are not supported. This is due to an architecture incompatibility preventing the building of DReal ([see here](https://github.com/dreal/dreal4/issues/295)).
 
 ## Repository Cloning
 
-Unzip the repository (qest-na.zip).  The root directory should contain various python files, scripts, a dockerfile, and subdirectories named `experiments`, `results` and `cegis`. The `experiments` directory contains the experiments to be run, the `results` directory contains the results of the experiments, and the `cegis` directory contains more python code. The `experiments` and `results` directories are mounted to the Docker container, so that the results can be easily accessed from the host machine.
-
-Alternatively, clone the repository using git:
+Clone the repository (qest-na.zip).
 
 ```console
-git clone https://gitfront.io/r/aleccedwards/45vX4SzLQENi/qest-na.git
+git clone https://github.com/aleccedwards/qest-na
 ```
+
+The root directory should contain various python files, scripts, a dockerfile, and subdirectories named `experiments`, `results` and `cegis`. The `experiments` directory contains the experiments to be run, the `results` directory contains the results of the experiments, and the `cegis` directory contains more python code. The `experiments` and `results` directories are mounted to the Docker container, so that the results can be easily accessed from the host machine.
 
 ## Install SpaceEx
 
